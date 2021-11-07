@@ -1,5 +1,6 @@
 import json
 import redis
+from tweet_storage_redis.tweet import Tweet
 
 class TweetStore:
 
@@ -11,6 +12,7 @@ class TweetStore:
     # Tweet Configuration
     redis_key = 'tweets'
     num_tweets = 20
+    trim_threshold = 100
 
     def __init__(self):
         self.db = r = redis.Redis(
@@ -34,6 +36,6 @@ class TweetStore:
 
         for item in self.db.lrange(self.redis_key, 0, limit-1):
             tweet_obj = json.loads(item)
-            tweets.append(tweet_obj)
+            tweets.append(Tweet(tweet_obj))
 
         return tweets
