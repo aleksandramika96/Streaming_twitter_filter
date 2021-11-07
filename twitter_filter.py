@@ -37,7 +37,7 @@ class StreamListener(tweepy.Stream):
             translator = google_translator()
             translated_text = translator.translate(text=status.text, lang_tgt='en')
             analyzer = SentimentIntensityAnalyzer()
-            polarity = analyzer.polarity_scores(translated_text)
+            polarity = analyzer.polarity_scores(translated_text)['compound']
             # compound = polarity['compound']
 
             tweet_item = {
