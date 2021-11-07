@@ -2,6 +2,12 @@ import tweepy
 import datetime
 import json
 import os
+import nltk
+import googletrans
+from googletrans import Translator
+
+nltk.download('vader_lexicon')
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 dir_name = os.path.dirname(__file__)
 file_path = os.path.join(dir_name, 'config', 'api.json')
@@ -25,9 +31,17 @@ class StreamListener(tweepy.Stream):
     def on_status(self, status):
 
         if ('RT @' not in status.text):
+            translator = Translator()
+            translated_text = translator.translate(status.text, dest='en')
+            analyzer = SentimentIntensityAnalyzer()
+            polarity = analyzer.polarity_scores(translated_text)
+            compound = polarity['compound']
+
             tweet_item = {
                 'id_str': status.id_str,
                 'text': status.text,
+                'polarity': polarity,
+                'compound': compound,
                 'username': status.user.screen_name,
                 'name': status.user.name,
                 'profile_image_url': status.user.profile_image_url,
@@ -37,13 +51,12 @@ class StreamListener(tweepy.Stream):
             print(tweet_item)
 
     def on_error(self, status_code):
-        if status_code == 420: #rate limited
+        if status_code == 420:  # rate limited
             return False
 
 
-#stream_listener = StreamListener(consumer_key, consumer_secret, access_token, access_token_secret)
-#stream = tweepy.Stream(auth=api.auth, listener=stream_listener)
+# stream_listener = StreamListener(consumer_key, consumer_secret, access_token, access_token_secret)
+# stream = tweepy.Stream(auth=api.auth, listener=stream_listener)
 
 stream = StreamListener(consumer_key, consumer_secret, access_token, access_token_secret)
-stream.filter(track=["@WarbyParker", "@Bonobos", "@Casper", "logo_design", "@pless_pl",
-                     "tort_weselny"])
+stream.filter(track=["@WarbyParker", "@Bonobos", "@Casper", "logo_design", "pizza", "wedding sweets"])
