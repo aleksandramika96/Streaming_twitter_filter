@@ -39,3 +39,4 @@ class TweetStore:
             tweets.append(Tweet(tweet_obj))
 
         return tweets
+
