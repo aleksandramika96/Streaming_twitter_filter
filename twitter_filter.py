@@ -3,9 +3,7 @@ import datetime
 import json
 import os
 import nltk
-import google_trans_new
 from google_trans_new import google_translator
-import tweet_storage_redis
 from tweet_storage_redis.tweet_store import TweetStore
 
 nltk.download('vader_lexicon')
@@ -38,13 +36,11 @@ class StreamListener(tweepy.Stream):
             translated_text = translator.translate(text=status.text, lang_tgt='en')
             analyzer = SentimentIntensityAnalyzer()
             polarity = analyzer.polarity_scores(translated_text)['compound']
-            # compound = polarity['compound']
 
             tweet_item = {
                 'id_str': status.id_str,
                 'text': status.text,
                 'polarity': polarity,
-                # 'compound': compound,
                 'username': status.user.screen_name,
                 'name': status.user.name,
                 'profile_image_url': status.user.profile_image_url,
