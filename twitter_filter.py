@@ -31,7 +31,7 @@ class StreamListener(tweepy.Stream):
 
     def on_status(self, status):
 
-        if ('RT @' not in status.text):
+        if 'RT @' not in status.text:
             translator = google_translator()
             translated_text = translator.translate(text=status.text, lang_tgt='en')
             analyzer = SentimentIntensityAnalyzer()
