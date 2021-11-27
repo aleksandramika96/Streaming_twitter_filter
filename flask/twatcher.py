@@ -1,6 +1,8 @@
 from flask import Flask, render_template
 from tweet_storage_redis.tweet_store import TweetStore
 
+import time
+
 app = Flask(__name__)
 store = TweetStore()
 
@@ -14,6 +16,7 @@ store = TweetStore()
 
 @app.route('/')
 def index():
+
     tweets = store.tweets()
     return render_template('index.html', tweets=tweets)
 

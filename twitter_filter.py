@@ -28,27 +28,36 @@ store = TweetStore()
 
 
 class StreamListener(tweepy.Stream):
+    # def __init__(self):
+    #     super(StreamListener, self).__init__()
+    #     self.num_tweets = 0
 
     def on_status(self, status):
+        # if self.num_tweets < 15:
+            if 'RT @' not in status.text:
+                try:
+                    translator = google_translator()
+                    translated_text = translator.translate(text=status.text, lang_tgt='en')
+                    analyzer = SentimentIntensityAnalyzer()
+                    polarity = analyzer.polarity_scores(translated_text)['compound']
 
-        if 'RT @' not in status.text:
-            translator = google_translator()
-            translated_text = translator.translate(text=status.text, lang_tgt='en')
-            analyzer = SentimentIntensityAnalyzer()
-            polarity = analyzer.polarity_scores(translated_text)['compound']
+                    tweet_item = {
+                        'id_str': status.id_str,
+                        'text': status.text,
+                        'polarity': polarity,
+                        'username': status.user.screen_name,
+                        'name': status.user.name,
+                        'profile_image_url': status.user.profile_image_url,
+                        'received_at': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    }
 
-            tweet_item = {
-                'id_str': status.id_str,
-                'text': status.text,
-                'polarity': polarity,
-                'username': status.user.screen_name,
-                'name': status.user.name,
-                'profile_image_url': status.user.profile_image_url,
-                'received_at': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            }
-
-            store.push(tweet_item)
-            print('Pushed to redis: ', tweet_item)
+                    store.push(tweet_item)
+                    # self.num_tweets += 1
+                    print('Pushed to redis: ', tweet_item)
+                except AttributeError:
+                    pass
+            else:
+                return False
 
     def on_error(self, status_code):
         if status_code == 420:  # rate limited
@@ -59,4 +68,6 @@ class StreamListener(tweepy.Stream):
 # stream = tweepy.Stream(auth=api.auth, listener=stream_listener)
 
 stream = StreamListener(consumer_key, consumer_secret, access_token, access_token_secret)
-stream.filter(track=["@WarbyParker", "@Bonobos", "@Casper", "logo_design", "pizza", "wedding sweets"])
+stream.filter(track=["@petermckinnon", "photography", "logo", "minimalistic", "wedding sweets", "vintage", "oldschool",
+                     "industrial"]
+              , languages=['en'])
