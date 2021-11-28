@@ -28,12 +28,13 @@ store = TweetStore()
 
 
 class StreamListener(tweepy.Stream):
-    # def __init__(self):
-    #     super(StreamListener, self).__init__()
-    #     self.num_tweets = 0
+
+    def __init__(self, consumer_key, consumer_secret, access_token,access_token_secret):
+        super().__init__(consumer_key, consumer_secret, access_token, access_token_secret)
+        self.num_tweets = 0
 
     def on_status(self, status):
-        # if self.num_tweets < 15:
+        if self.num_tweets < 15:
             if 'RT @' not in status.text:
                 try:
                     translator = google_translator()
@@ -52,7 +53,7 @@ class StreamListener(tweepy.Stream):
                     }
 
                     store.push(tweet_item)
-                    # self.num_tweets += 1
+                    self.num_tweets += 1
                     print('Pushed to redis: ', tweet_item)
                 except AttributeError:
                     pass
