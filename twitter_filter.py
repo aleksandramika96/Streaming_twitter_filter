@@ -30,7 +30,7 @@ store = TweetStore()
 class StreamListener(tweepy.Stream):
 
     def __init__(self, consumer_key, consumer_secret, access_token,access_token_secret):
-        super().__init__(consumer_key, consumer_secret, access_token, access_token_secret)
+        super().__init__(self, consumer_key, consumer_secret, access_token, access_token_secret)
         self.num_tweets = 0
 
     def on_status(self, status):
@@ -58,7 +58,8 @@ class StreamListener(tweepy.Stream):
                 except AttributeError:
                     pass
             else:
-                return False
+                exit
+                # return False
 
     def on_error(self, status_code):
         if status_code == 420:  # rate limited
