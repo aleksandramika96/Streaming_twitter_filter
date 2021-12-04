@@ -30,7 +30,7 @@ store = TweetStore()
 class StreamListener(tweepy.Stream):
 
     def __init__(self, consumer_key, consumer_secret, access_token,access_token_secret):
-        super().__init__(self, consumer_key, consumer_secret, access_token, access_token_secret)
+        super().__init__(consumer_key, consumer_secret, access_token, access_token_secret)
         self.num_tweets = 0
 
     def on_status(self, status):

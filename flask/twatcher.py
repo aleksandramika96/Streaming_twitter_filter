@@ -16,7 +16,6 @@ store = TweetStore()
 
 @app.route('/')
 def index():
-
     tweets = store.tweets()
     return render_template('index.html', tweets=tweets)
 
